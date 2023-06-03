@@ -1,0 +1,101 @@
+C010 000	jmp	start	Jumps over variables and into the program
+0000 001	nothing	Sidhardh Burre, ssb3vk@virginia.edu, 4/2/2021, bubblesort.ibcm
+000A 002 size	dw	10	Sets the size of the array to 10 (no other size)
+0070 003 loc	dw	30	Sets the location of the array to 070
+0000 004 i	dw	0	Variable location for i (outer loop iterator)
+0000 005 j	dw	0	Variable location for j (inner loop iterator)
+3000 006 load	dw	3000	Sets up the load instruction for later crafting
+4000 007 store	dw	4000	Sets up the store instruction for later crafting
+6000 008 sub	dw	6000	Sets up the sub instruction for later crafting 
+0001 009 one	dw	0001	the one value
+0000 00A zero	dw	0000	the zero value
+0000 00B iter	dw	0000	the iterator 			
+0000 00C temp	dw	0	A temporary variable for the swap			
+0000 00D			Undeclared variables
+0000 00E
+0000 00F
+300B 010 start	load	iter	Loads the iter, loop to load array
+6002 011 	sub	size	Accumulator = iter-size
+D01E 012 	jmpe	loop	If Accumulator = 0 (end of array) we move on to the next step
+3007 013	load	store	Loads the store command to craft 
+5003 014	add	loc	Adds loc to the store command
+500B 015 	add	iter	Adds iter to the store command 
+4018 016	store	doit0	Stores the crafted store command to the doit0 location
+1000 017	readH	a[iter]	Reads in a value from the input
+0000 018 doit0	dw	a[iter]=Sets the value at the location to the input
+300B 019	load	iter	Loads iter
+5009 01A	add	iter++	Increments the iter by 1
+400B 01B	store	iter	Stores the incremented iter
+C010 01C	jmp		Jumps back to the beginning of this loop
+0000 01D			______Spacer Between Loops_________
+3004 01E loopO	load	i	Loads i, the iterator for the outer loop of the bubble sort << Jump to here from the end of the outer loop
+6002 01F	sub	size	Subtracts size from i for the loop conditional
+D055 020	jmpe	loop	If i-size = 0 (done with outer loop) we move on to printing the loop
+B000 021			______Spacer between inner and outer loops______
+3002 022	load	size	Loads the size value
+6009 023	sub	size-1	Decrements the size value for loading into the j value
+4005 024	store	j	Stores size-1 into j
+3005 025 loopI	load	i	Loads j, the iterator for the outer loop of the bubble sort << Jump to here from end of inner loop
+6004 026	sub	j-i	Subtracts i from j, for the inner loop conditional
+D050 027	jumpe		Checks if we are exceeding the size of the array and then exits the for loop
+3005 028	load	j	Loads the value of j for loading into the iter (to extract the A[j-1] term)
+6009 029	sub	j-1	Decrements the value of j
+400B 02A	store	iter	Stores the value of j-1 into the iter
+3006 02B	load	load	Loads the load command
+5003 02C	add	loc	Adds loc to load (zeros at beginning of array)
+5005 02D	add	j	Adds j to loc+load (positions at needed value)
+6009 02E	sub	1	Subtracts 1 from the load command (preceding position)
+4034 02F	store	doit1	Stores the crafted load command into doit1
+3008 030	load	sub	Loads the sub command
+5003 031	add	loc	Adds loc to sub (zeros at beginnning of array)
+5005 032	add	j	Adds j to the sub command (zeros at j)
+4035 033	store	doit2	Stores the crafted sub command into doit2
+0000 034 doit1	load	doit	Loads the preceding value
+0000 035 doit2	sub	doit	Subtracts the head value from the preceding value
+E04C 036 if 	jmpl		Effectively checks if a[j]-a[j-1] < 0 for the if statement
+3006 037 	load	load	Loads the load command
+5003 038	add	loc	adds loc to load (zeros at the beginning of the array)
+5005 039	add 	j	Adds j to loc+load (positions at needed value)
+403B 03A 	store	doit	Stores the load command into doit3
+0000 03B doit3	load	a[j]	Loads the value at a[j]
+400C 03C	store 	temp	Stores a[j] at temp
+3006 03D 	load	load 	Loads the load command
+5003 03E	add 	loc 	adds loc to load 
+5005 03F	add	j	adds j to loc+load
+6009 040	sub	1	Decrements the crafted load command by 1
+4048 041 	store	doit	Stores the crafted load command doit4
+3007 042	load	store	Loads the store command for crafting
+5003 043	add	loc	Adds loc to the store command
+5005 044	add	j	Adds j to the store command 
+4049 045	store	doit	Stores the crafted store command into doit5
+6009 046	sub	1	Decrements the crafted store command for later use
+404B 047	store	a[j-1]	Stores the crafted store command at doit into doit6
+0000 048 doit4	load		Command to load a[j-1]
+0000 049 doit5	store		Command to store at a[j]
+300C 04A	load	temp	Loads temp
+0000 04B doit6	store	a[j-1]	Stores the temp value to a[j-1]
+3005 04C	load	j	Loads j
+6009 04D	sub	j-1	Decrements j
+4005 04E	store	j	Stores j back in its spot
+C025 04F	jmp		Jumps to the beginning of this for loop << end of inner for loop
+3004 050	load	i	Loads i
+5009 051	add	i+1	Increments i
+4004 052	store	i 	Stores i back in its spot
+C01E 053	jmp		Jumps to the beginning of this for loop << end of outer for loop
+B000 054			____________________Printing the loop________________________
+300A 055	load	0	Loads the zero value
+400B 056	store	iter	Sets the iter value to 0
+300B 057	load	iter	Loads the iter value for checking where we are in the loop << beginning of print loop
+6002 058	sub	size	Subtracts size from the iter to let us know when we have reached the end of the loop
+D064 059 loopR	jmpe	loop	We have reached the end of the loop and can end the program
+3006 05A 	load	load	Loads the load value
+5003 05B	add	loc	Adds the location value to the load command (zeros at beginning of array)
+500B 05C	add	iter	Adds iter to the load command (at iter location)
+405E 05D	store	load	Stores the load command at doit7
+0000 05E doit7	load	a[iter] Loads the a[iter] value into the accumulator
+1800 05F	printH		Prints out the a[iter] value
+300B 060	load	iter	Loads the iter value
+5009 061	add	1	Increments the iter value
+400B 062	store 	iter	Stores the incremented iter
+C057 063	jmp		Jumps to the beginnninf of this loop << end of print loop
+0000 064	halt		____________________end of program____________________

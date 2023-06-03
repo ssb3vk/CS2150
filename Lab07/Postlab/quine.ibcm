@@ -1,0 +1,26 @@
+C00A 000	jmp	start	Jumps over variables and into the program
+0000 001	nothing	Sidhardh Burre, ssb3vk@virginia.edu, 4/2/2021, quine.ibcm
+001A 002 size	dw	10	Sets the size of the program to 001A or 26 (no other size)
+0000 003 loc	dw	30	Sets the location of beginning of the program to 0000
+3000 004 load	dw	3000	Sets up the load instruction for later crafting
+0001 005 one	dw	0001	the one value
+0000 006 zero	dw	0000	the zero value
+0007 007 iter	dw	0000	the iterator 						
+0000 008			Undeclared variables
+0000 009
+3006 00A	load	0	Loads the zero value
+4007 00B	store	iter	Sets the iter value to 0
+3007 00C	load	iter	Loads the iter value for checking where we are in the loop << beginning of print loop
+6002 00D	sub	size	Subtracts size from the iter to let us know when we have reached the end of the program
+D019 00E loopR	jmpe	loop	We have reached the end of the loop and can end the program (we can jump anywhere >018)
+3004 00F 	load	load	Loads the load value
+5003 010	add	loc	Adds the location value to the load command (zeros at beginning of program)
+5007 011	add	iter	Adds iter to the load command (at iter location)
+4013 012	store	load	Stores the load command at doit7
+3013 013 doit7	load	a[iter] Loads the a[iter] value into the accumulator
+1800 014	printH		Prints out the a[iter] value
+3007 015	load	iter	Loads the iter value
+5005 016	add	1	Increments the iter value
+4007 017	store 	iter	Stores the incremented iter
+C00C 018	jmp		Jumps to the beginnninf of this loop << end of print loop
+0000 019	halt		End of program

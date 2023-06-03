@@ -1,0 +1,59 @@
+C00A 000	jmp	start	Jumps over the variables and into the program
+0000 001	nothing	Sidhardh Burre, ssb3vk@virginia.edu, 3/31/2021, array.ibcm
+0000 002 size	dw	0	int size
+0040 003 loc	dw	30	Sets the first member of the array at address location 40
+0000 004 iter	dw	0	int iterator to hold the current location in the array
+0001 005 one	dw	1	the one value
+0000 006 zero	dw	0	the zero value
+3000 007 load	dw	3000	Sets up the load instruction for later crafting
+4000 008 store	dw	4000	Sets up the store instruction for later crafting
+0000 009 var	dw	0	This is the dummy variable for storing the load and store commands. Not required but there for safety
+1000 00A start	readH	size	read the array length
+4002 00B	store	size	storing the size of the array
+3006 00C 	load 	zero	iter = 0
+4004 00D	store	iter
+3004 00E	load	iter	loading iter variable into the accumulator	
+6002 00F	sub	size	Subtracting size from the iter lets us know where we are in the array, sets up for jmpe next
+D01C 010 loop1	jmpe	loop	We have reached the end of the array, can continue to the next step, (loop to load/print array)
+3008 011 	load	store	Loading the store command to craft it for input 
+5003 012	add	size	Adds the loc to the load command
+5004 013	add	iter	Adds the iter to the load command; positions it where needed
+4016 014	store		Stores the crafted store command to the doit location
+1000 015 	readH		Reading in from the console
+0000 016 doit	dw	a[iter] Stores the input at the desired locatoin in the array
+3004 017	load	iter	Loads iter
+5005 018	add	iter+1	Increments the iter by 1
+4004 019	store	iter	Stores the incremented iter
+C00E 01A 	jmp		Jumps back to the beginning of this loop (loop to load/print array)
+0000 01B			__________________Spacer Between Loops_________________________
+3006 01C	load	0	Loads zero into the iter in preparation for iterating down the array
+4004 01D	store 	iter	Stores 0 into the iter
+3004 01E	load	iter	Loads the iter variable into the accumulator
+6002 01F	sub	size	Subtracting size from the iter lets us know where we are in the array, sets up for jmpl next
+D02C 020 loop2	jmpe	loop	We have reached the end of the array, can jump to the next loop
+3007 021 	load	load	Loading the load command to craft for loading a value
+5003 022	add	loc	Adding the location
+5004 023	add	iter	Adding the iterator
+4025 024	store		Storing the crafted load command to the doit location
+0000 025 doit	dw	a[iter] Loads the value at the location
+1800 026	printH		prints the value just loaded
+3004 027	load	iter	Loads iter
+5005 028	add	iter+1	Increment iter by 1
+4004 029	store	iter	Stores the incremented iter
+C01E 02A	jmp		Jumps back to the beginning of this loop
+B000 02B	skip		___________________Spacer between Loops_________________________
+3002 02C	load	size	Loads the size into the iter in preparation for iterating back down the array
+6005 02D	sub	size-1	Array is 0-indexed so we have to do this
+4004 02E	store 	iter	Stores size-1 into the iter
+E03A 02F loop2	jmpl	loop	We have reached the beginning of the array, can jump to exit
+3007 030 	load	load	Loading the load command to craft for loading a value
+5003 031	add	loc	Adding the location
+5004 032	add	iter	Adding the iterator
+4034 033	store		Storing the crafted load command to the doit location
+0000 034 doit	dw	a[iter] Loads the value at the location
+1800 035	printH		prints the value just loaded
+3004 036	load	iter	Loads iter
+6005 037	sub	iter-1	Decrement iter by 1
+4004 038	store	iter	Stores the decremented iter
+C02F 039	jmp		Jumps back to the beginning of this loop
+0000 03A	halt		End of the program
